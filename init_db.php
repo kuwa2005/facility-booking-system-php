@@ -21,6 +21,30 @@ function hasColumn(PDO $pdo, string $table, string $column): bool
 }
 
 $pdo->exec(
+    "CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(120) NOT NULL,
+        email VARCHAR(190) NOT NULL UNIQUE,
+        password_hash VARCHAR(255) NOT NULL,
+        phone VARCHAR(50) NULL,
+        organization_name VARCHAR(255) NULL,
+        is_active TINYINT(1) NOT NULL DEFAULT 1,
+        email_verified TINYINT(1) NOT NULL DEFAULT 1,
+        reset_token VARCHAR(120) NULL,
+        reset_token_expires_at DATETIME NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+);
+
+if (!hasColumn($pdo, 'users', 'reset_token')) {
+    $pdo->exec("ALTER TABLE users ADD COLUMN reset_token VARCHAR(120) NULL");
+}
+if (!hasColumn($pdo, 'users', 'reset_token_expires_at')) {
+    $pdo->exec("ALTER TABLE users ADD COLUMN reset_token_expires_at DATETIME NULL");
+}
+
+$pdo->exec(
     "CREATE TABLE IF NOT EXISTS rooms (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(120) NOT NULL,
