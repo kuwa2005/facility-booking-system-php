@@ -34,6 +34,7 @@ $user = currentUser();
             <a href="/index.php#booking-form">予約申請</a>
             <?php if ($user): ?>
                 <a href="/my_page.php">マイページ</a>
+                <a href="/my_reservations.php">予約一覧</a>
                 <a href="/user_logout.php">ログアウト</a>
             <?php else: ?>
                 <a href="/user_login.php">ユーザーログイン</a>

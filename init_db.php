@@ -87,6 +87,7 @@ if (!hasColumn($pdo, 'rooms', 'description')) {
 $pdo->exec(
     "CREATE TABLE IF NOT EXISTS applications (
         id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NULL,
         applicant_representative VARCHAR(120) NOT NULL,
         applicant_phone VARCHAR(50) NOT NULL,
         applicant_email VARCHAR(190) NOT NULL,
@@ -102,6 +103,10 @@ $pdo->exec(
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
 );
+
+if (!hasColumn($pdo, 'applications', 'user_id')) {
+    $pdo->exec("ALTER TABLE applications ADD COLUMN user_id INT NULL");
+}
 
 $pdo->exec(
     "CREATE TABLE IF NOT EXISTS usages (

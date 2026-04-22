@@ -23,6 +23,7 @@ $user = currentUser();
         <nav class="public-nav">
             <a href="/index.php">ホーム</a>
             <a href="/my_page.php">マイページ</a>
+            <a href="/my_reservations.php">予約一覧</a>
             <a href="/user_logout.php">ログアウト</a>
         </nav>
     </div>
@@ -34,7 +35,9 @@ $user = currentUser();
             <h2 class="card-title">マイページ</h2>
             <p>ログイン中ユーザー: <strong><?= h((string)($user['name'] ?? '')) ?></strong></p>
             <p>メールアドレス: <?= h((string)($user['email'] ?? '')) ?></p>
-            <p style="margin-top: 1rem;">この画面を基点に、次のIssueで予約一覧・プロフィール編集を追加していきます。</p>
+            <p style="margin-top: 1rem;">
+                <a href="/my_reservations.php" class="btn btn-primary">自分の予約を確認する</a>
+            </p>
         </section>
     </div>
 </main>

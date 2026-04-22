@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/helpers.php';
+require_once __DIR__ . '/auth.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('/index.php');
@@ -66,6 +67,8 @@ if ($entranceFeeAmount < 0) {
 }
 
 $pdo = getPdo();
+$user = currentUser();
+$userId = $user ? (int)$user['id'] : null;
 
 $checkRoom = $pdo->prepare(
     "SELECT id, base_price_morning, base_price_afternoon, base_price_evening, extension_price_midday, extension_price_evening, ac_price_per_hour
@@ -134,11 +137,13 @@ $pdo->beginTransaction();
 try {
     $appStmt = $pdo->prepare(
         "INSERT INTO applications (
+            user_id,
             applicant_representative, applicant_phone, applicant_email,
             event_name, event_description, entrance_fee_type, entrance_fee_amount, total_amount
-         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
     $appStmt->execute([
+        $userId,
         $applicantName,
         $applicantPhone,
         $applicantEmail,
