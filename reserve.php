@@ -21,6 +21,7 @@ $extensions = $_POST['extensions'] ?? [];
 $acRequested = (int)($_POST['ac_requested'] ?? 0) === 1;
 $entranceFeeType = trim((string)($_POST['entrance_fee_type'] ?? 'free'));
 $entranceFeeAmount = (int)($_POST['entrance_fee_amount'] ?? 0);
+$equipmentQtyInput = (array)($_POST['equipment_qty'] ?? []);
 $purpose = trim((string)($_POST['purpose'] ?? ''));
 
 $validSlots = array_keys(reservationSlots());
@@ -122,6 +123,54 @@ if (isset($extensionSet['evening'])) {
     $extensionCharge += (int)$room['extension_price_evening'];
 }
 $acCharge = $acRequested ? (int)$room['ac_price_per_hour'] * 3 : 0;
+$mainSlotCount = count($slotSet);
+
+$selectedEquipment = [];
+foreach ($equipmentQtyInput as $eqIdRaw => $qtyRaw) {
+    $eqId = (int)$eqIdRaw;
+    $qty = (int)$qtyRaw;
+    if ($eqId > 0 && $qty > 0) {
+        $selectedEquipment[$eqId] = $qty;
+    }
+}
+
+$equipmentCharge = 0;
+$equipmentLines = [];
+if (count($selectedEquipment) > 0) {
+    $ids = array_keys($selectedEquipment);
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $eqStmt = $pdo->prepare(
+        "SELECT id, name, price_type, unit_price, max_quantity
+         FROM equipment
+         WHERE enabled = 1 AND id IN ($placeholders)"
+    );
+    $eqStmt->execute($ids);
+    $eqRows = $eqStmt->fetchAll();
+
+    foreach ($eqRows as $eq) {
+        $eqId = (int)$eq['id'];
+        $qty = min($selectedEquipment[$eqId] ?? 0, (int)$eq['max_quantity']);
+        if ($qty <= 0) {
+            continue;
+        }
+        $lineAmount = 0;
+        if ($eq['price_type'] === 'per_slot') {
+            $lineAmount = (int)$eq['unit_price'] * $qty * $mainSlotCount;
+        } elseif ($eq['price_type'] === 'flat') {
+            $lineAmount = (int)$eq['unit_price'] * $qty;
+        } else {
+            $lineAmount = 0;
+        }
+
+        $equipmentCharge += $lineAmount;
+        $equipmentLines[] = [
+            'equipment_id' => $eqId,
+            'quantity' => $qty,
+            'slot_count' => $mainSlotCount,
+            'line_amount' => $lineAmount,
+        ];
+    }
+}
 
 $multiplier = 1.0;
 if ($entranceFeeType === 'paid' && $entranceFeeAmount >= 1 && $entranceFeeAmount <= 3000) {
@@ -131,7 +180,7 @@ if ($entranceFeeType === 'paid' && $entranceFeeAmount >= 1 && $entranceFeeAmount
 }
 
 $roomChargeAfterMultiplier = (int)round(($roomCharge + $extensionCharge) * $multiplier);
-$subtotal = $roomChargeAfterMultiplier + $acCharge;
+$subtotal = $roomChargeAfterMultiplier + $equipmentCharge + $acCharge;
 
 $pdo->beginTransaction();
 try {
@@ -160,8 +209,8 @@ try {
             application_id, room_id, use_date,
             use_morning, use_afternoon, use_evening,
             use_midday_extension, use_evening_extension,
-            ac_requested, room_charge, extension_charge, ac_charge, subtotal_amount
-         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            ac_requested, room_charge, extension_charge, equipment_charge, ac_charge, subtotal_amount
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
     $usageStmt->execute([
         $applicationId,
@@ -175,9 +224,27 @@ try {
         $acRequested ? 1 : 0,
         $roomChargeAfterMultiplier,
         $extensionCharge,
+        $equipmentCharge,
         $acCharge,
         $subtotal,
     ]);
+    $usageId = (int)$pdo->lastInsertId();
+
+    if (count($equipmentLines) > 0) {
+        $eqInsert = $pdo->prepare(
+            "INSERT INTO usage_equipment (usage_id, equipment_id, quantity, slot_count, line_amount)
+             VALUES (?, ?, ?, ?, ?)"
+        );
+        foreach ($equipmentLines as $line) {
+            $eqInsert->execute([
+                $usageId,
+                $line['equipment_id'],
+                $line['quantity'],
+                $line['slot_count'],
+                $line['line_amount'],
+            ]);
+        }
+    }
 
     $pdo->commit();
 } catch (Throwable $e) {

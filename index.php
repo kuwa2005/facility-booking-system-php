@@ -11,6 +11,12 @@ $rooms = $pdo->query(
     "SELECT id, name, capacity, base_price_morning, base_price_afternoon, base_price_evening
      FROM rooms WHERE is_active = 1 ORDER BY id"
 )->fetchAll();
+$equipmentList = $pdo->query(
+    "SELECT id, category, name, price_type, unit_price, max_quantity
+     FROM equipment
+     WHERE enabled = 1
+     ORDER BY category, id"
+)->fetchAll();
 $slots = reservationSlots();
 $extensions = extensionSlots();
 $flash = $_GET['flash'] ?? '';
@@ -133,6 +139,20 @@ $user = currentUser();
                 <label>利用目的
                     <input type="text" name="purpose" required maxlength="255">
                 </label>
+                <fieldset style="grid-column: 1 / -1;">
+                    <legend>設備（任意）</legend>
+                    <div class="equipment-grid">
+                        <?php foreach ($equipmentList as $eq): ?>
+                            <label class="equipment-item">
+                                <span>
+                                    <?= h($eq['name']) ?>
+                                    <small>(<?= h($eq['price_type']) ?> / <?= number_format((int)$eq['unit_price']) ?>円)</small>
+                                </span>
+                                <input type="number" name="equipment_qty[<?= (int)$eq['id'] ?>]" min="0" max="<?= (int)$eq['max_quantity'] ?>" value="0">
+                            </label>
+                        <?php endforeach; ?>
+                    </div>
+                </fieldset>
                 <button type="submit" class="btn btn-primary btn-block" style="grid-column: 1 / -1;">予約を申請する</button>
             </form>
         </section>

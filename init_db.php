@@ -123,12 +123,30 @@ $pdo->exec(
         ac_hours DECIMAL(4,1) DEFAULT NULL,
         room_charge INT UNSIGNED NOT NULL DEFAULT 0,
         extension_charge INT UNSIGNED NOT NULL DEFAULT 0,
+        equipment_charge INT UNSIGNED NOT NULL DEFAULT 0,
         ac_charge INT UNSIGNED NOT NULL DEFAULT 0,
         subtotal_amount INT UNSIGNED NOT NULL DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         CONSTRAINT fk_usage_application FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
         CONSTRAINT fk_usage_room FOREIGN KEY (room_id) REFERENCES rooms(id)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+);
+if (!hasColumn($pdo, 'usages', 'equipment_charge')) {
+    $pdo->exec("ALTER TABLE usages ADD COLUMN equipment_charge INT UNSIGNED NOT NULL DEFAULT 0");
+}
+
+$pdo->exec(
+    "CREATE TABLE IF NOT EXISTS usage_equipment (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        usage_id INT NOT NULL,
+        equipment_id INT NOT NULL,
+        quantity INT UNSIGNED NOT NULL DEFAULT 1,
+        slot_count INT UNSIGNED NOT NULL DEFAULT 1,
+        line_amount INT UNSIGNED NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_usage_equipment_usage FOREIGN KEY (usage_id) REFERENCES usages(id) ON DELETE CASCADE,
+        CONSTRAINT fk_usage_equipment_equipment FOREIGN KEY (equipment_id) REFERENCES equipment(id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
 );
 

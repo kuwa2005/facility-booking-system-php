@@ -39,6 +39,7 @@ $stmt = $pdo->prepare(
         u.ac_requested,
         u.room_charge,
         u.extension_charge,
+        u.equipment_charge,
         u.ac_charge,
         r.name AS room_name
      FROM applications a
@@ -53,6 +54,17 @@ $row = $stmt->fetch();
 if (!$row) {
     redirect('/my_reservations.php?flash=' . urlencode('対象の予約が見つかりません'));
 }
+
+$eqStmt = $pdo->prepare(
+    "SELECT e.name, ue.quantity, ue.slot_count, ue.line_amount
+     FROM usage_equipment ue
+     INNER JOIN usages u ON u.id = ue.usage_id
+     INNER JOIN equipment e ON e.id = ue.equipment_id
+     WHERE u.application_id = ?
+     ORDER BY ue.id"
+);
+$eqStmt->execute([(int)$row['id']]);
+$eqLines = $eqStmt->fetchAll();
 
 $slotLabels = [];
 if ((int)$row['use_morning'] === 1) {
@@ -106,8 +118,19 @@ if ((int)$row['use_evening_extension'] === 1) {
             <p><strong>料金内訳</strong></p>
             <p>部屋料金: <?= number_format((int)$row['room_charge']) ?>円</p>
             <p>延長料金: <?= number_format((int)$row['extension_charge']) ?>円</p>
+            <p>設備料金: <?= number_format((int)$row['equipment_charge']) ?>円</p>
             <p>空調料金: <?= number_format((int)$row['ac_charge']) ?>円</p>
             <p><strong>合計: <?= number_format((int)$row['total_amount']) ?>円</strong></p>
+            <?php if (count($eqLines) > 0): ?>
+                <div style="margin-top:0.8rem;">
+                    <strong>設備明細</strong>
+                    <ul class="slot-list">
+                        <?php foreach ($eqLines as $line): ?>
+                            <li><?= h($line['name']) ?> x <?= (int)$line['quantity'] ?> (slot <?= (int)$line['slot_count'] ?>): <?= number_format((int)$line['line_amount']) ?>円</li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
 
             <?php if (in_array($row['status'], ['pending', 'approved'], true)): ?>
                 <form method="post" action="/cancel_reservation.php" style="margin-top: 1rem;">
