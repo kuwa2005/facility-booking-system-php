@@ -1,0 +1,69 @@
+name: "Migration Task"
+description: "Node版からの移植タスク"
+title: "[Migration] "
+labels:
+  - "type:migration"
+  - "status:ready"
+body:
+  - type: input
+    id: source
+    attributes:
+      label: 元機能（Node版）
+      placeholder: 例) src/views/user/mypage.ejs / src/routes/user.ts
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 移植スコープ
+      description: どこまで移植するか
+      placeholder: |
+        - 画面
+        - API/処理
+        - DBスキーマ
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: 実装タスク
+      value: |
+        - [ ] DB変更
+        - [ ] 画面実装
+        - [ ] バリデーション
+        - [ ] 管理画面対応
+        - [ ] 動作確認
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ条件
+      placeholder: |
+        - [ ] Node版の主要操作がPHP版で再現できる
+        - [ ] 既存機能に回帰がない
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: 対象領域
+      options:
+        - area:public
+        - area:user
+        - area:staff
+        - area:auth
+        - area:db
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先度
+      options:
+        - "priority:p0"
+        - "priority:p1"
+        - "priority:p2"
+        - "priority:p3"
+    validations:
+      required: true

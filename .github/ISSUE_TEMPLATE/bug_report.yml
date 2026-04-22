@@ -1,0 +1,54 @@
+name: "Bug Report"
+description: "不具合を報告する"
+title: "[Bug] "
+labels:
+  - "type:bug"
+  - "status:triage"
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 何が起きているかを簡潔に記載
+      placeholder: 例) 予約確定時に 500 エラーになる
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      description: 再現できる手順を記載
+      placeholder: |
+        1. ログイン
+        2. 予約画面で...
+        3. 確定すると...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する結果
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の結果
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: 重要度
+      options:
+        - "priority:p0"
+        - "priority:p1"
+        - "priority:p2"
+        - "priority:p3"
+    validations:
+      required: true
+  - type: input
+    id: screen
+    attributes:
+      label: 対象画面/URL
+      placeholder: /admin.php など

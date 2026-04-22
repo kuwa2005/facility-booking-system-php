@@ -1,0 +1,79 @@
+- name: "type:bug"
+  color: "d73a4a"
+  description: "不具合対応"
+
+- name: "type:feature"
+  color: "0e8a16"
+  description: "新機能・改善"
+
+- name: "type:migration"
+  color: "5319e7"
+  description: "Node版からの移植タスク"
+
+- name: "type:docs"
+  color: "0075ca"
+  description: "ドキュメント関連"
+
+- name: "status:triage"
+  color: "fbca04"
+  description: "一次切り分け待ち"
+
+- name: "status:ready"
+  color: "0e8a16"
+  description: "着手可能"
+
+- name: "status:blocked"
+  color: "b60205"
+  description: "外部要因などで停止中"
+
+- name: "status:in-progress"
+  color: "1d76db"
+  description: "実装中"
+
+- name: "status:review"
+  color: "0052cc"
+  description: "レビュー待ち"
+
+- name: "priority:p0"
+  color: "b60205"
+  description: "最優先（サービス停止級）"
+
+- name: "priority:p1"
+  color: "d93f0b"
+  description: "高優先"
+
+- name: "priority:p2"
+  color: "fbca04"
+  description: "中優先"
+
+- name: "priority:p3"
+  color: "c2e0c6"
+  description: "低優先"
+
+- name: "area:public"
+  color: "bfdadc"
+  description: "公開画面"
+
+- name: "area:user"
+  color: "bfd4f2"
+  description: "ユーザー機能"
+
+- name: "area:staff"
+  color: "f9d0c4"
+  description: "職員機能"
+
+- name: "area:auth"
+  color: "fef2c0"
+  description: "認証・アカウント"
+
+- name: "area:db"
+  color: "c5def5"
+  description: "DB・マイグレーション"
+
+- name: "area:infra"
+  color: "d4c5f9"
+  description: "インフラ・運用"
+
+- name: "kind:request"
+  color: "ededed"
+  description: "要望・相談"

@@ -1,0 +1,54 @@
+name: "Feature Request"
+description: "新機能・改善要望"
+title: "[Feature] "
+labels:
+  - "type:feature"
+  - "status:triage"
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景・課題
+      description: なぜ必要か
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 提案内容
+      description: 具体的に何を実現したいか
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ条件
+      description: 完了判定の条件
+      placeholder: |
+        - [ ] 条件1
+        - [ ] 条件2
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: 対象領域
+      options:
+        - area:public
+        - area:user
+        - area:staff
+        - area:auth
+        - area:db
+        - area:infra
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先度
+      options:
+        - "priority:p1"
+        - "priority:p2"
+        - "priority:p3"
+    validations:
+      required: true
