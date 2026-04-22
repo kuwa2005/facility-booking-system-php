@@ -1,0 +1,133 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f2f5f8;
+    color: #1f2937;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 24px auto;
+    padding: 0 16px;
+}
+
+.container.narrow {
+    max-width: 560px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.header-links {
+    display: flex;
+    gap: 8px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    margin-top: 16px;
+}
+
+.form-grid {
+    display: grid;
+    gap: 10px;
+}
+
+label {
+    display: grid;
+    gap: 6px;
+    font-size: 14px;
+}
+
+input, select, button {
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+}
+
+button, .link-button {
+    background: #1d4ed8;
+    color: #fff;
+    border: none;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.link-button {
+    padding: 8px 10px;
+    border-radius: 6px;
+}
+
+.link-button.danger {
+    background: #dc2626;
+}
+
+.notice {
+    background: #dcfce7;
+    color: #166534;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.error {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 8px;
+    text-align: left;
+    vertical-align: top;
+    font-size: 13px;
+}
+
+.inline-form {
+    display: grid;
+    gap: 6px;
+}
+
+.status {
+    border-radius: 999px;
+    padding: 3px 8px;
+    font-size: 11px;
+    color: #fff;
+}
+
+.status-pending {
+    background: #f59e0b;
+}
+
+.status-approved {
+    background: #10b981;
+}
+
+.status-rejected,
+.status-cancelled {
+    background: #ef4444;
+}
+
