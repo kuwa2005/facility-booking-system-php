@@ -24,6 +24,7 @@ $user = currentUser();
             <a href="/index.php">ホーム</a>
             <a href="/my_page.php">マイページ</a>
             <a href="/my_reservations.php">予約一覧</a>
+            <a href="/announcements.php">お知らせ</a>
             <a href="/user_logout.php">ログアウト</a>
         </nav>
     </div>
@@ -37,6 +38,7 @@ $user = currentUser();
             <p>メールアドレス: <?= h((string)($user['email'] ?? '')) ?></p>
             <p style="margin-top: 1rem;">
                 <a href="/my_reservations.php" class="btn btn-primary">自分の予約を確認する</a>
+                <a href="/announcements.php" class="btn btn-outline">お知らせを見る</a>
             </p>
         </section>
     </div>

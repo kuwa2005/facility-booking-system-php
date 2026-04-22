@@ -174,6 +174,18 @@ $pdo->exec(
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
 );
 
+$pdo->exec(
+    "CREATE TABLE IF NOT EXISTS announcements (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        body TEXT NOT NULL,
+        is_published TINYINT(1) NOT NULL DEFAULT 0,
+        published_at DATETIME NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4"
+);
+
 $countStmt = $pdo->query("SELECT COUNT(*) AS cnt FROM rooms");
 $count = (int)($countStmt->fetch()['cnt'] ?? 0);
 

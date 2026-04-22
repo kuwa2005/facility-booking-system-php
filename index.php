@@ -38,6 +38,7 @@ $user = currentUser();
             <a href="/index.php">ホーム</a>
             <a href="/rooms.php">施設一覧</a>
             <a href="/availability.php">空き状況</a>
+            <a href="/announcements.php">お知らせ</a>
             <a href="/index.php#booking-form">予約申請</a>
             <?php if ($user): ?>
                 <a href="/my_page.php">マイページ</a>
