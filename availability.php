@@ -102,6 +102,9 @@ foreach ($rows as $row) {
         <?php if ($closed): ?>
             <div class="error">この日は休館日です。<?= h((string)$closed['reason']) ?></div>
         <?php endif; ?>
+        <?php if (!$closed): ?>
+            <div class="notice">この日は予約可能日です。空き枠がある施設は予約申請できます。</div>
+        <?php endif; ?>
 
         <section class="card">
             <h3 class="card-title"><?= h($selectedDate) ?> の空き状況</h3>

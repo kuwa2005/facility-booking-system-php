@@ -81,6 +81,15 @@ if (!$room) {
     redirect('/index.php?flash=' . urlencode('部屋が見つかりません'));
 }
 
+$closedStmt = $pdo->prepare("SELECT id, reason FROM closed_dates WHERE date = ? LIMIT 1");
+$closedStmt->execute([$useDate]);
+$closed = $closedStmt->fetch();
+if ($closed) {
+    $reason = trim((string)($closed['reason'] ?? ''));
+    $message = $reason !== '' ? '選択日が休館日のため予約できません: ' . $reason : '選択日が休館日のため予約できません';
+    redirect('/index.php?flash=' . urlencode($message));
+}
+
 $dup = $pdo->prepare(
     "SELECT u.id
      FROM usages u

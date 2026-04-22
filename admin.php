@@ -84,7 +84,7 @@ foreach ($reservations as $row) {
         <div class="group-title">施設管理</div>
         <a href="/admin.php">部屋管理（モック）</a>
         <a href="/equipment_admin.php">設備管理</a>
-        <a href="/admin.php">休館日管理（モック）</a>
+        <a href="/closed_dates_admin.php">休館日管理</a>
     </aside>
 
     <main class="staff-main">
