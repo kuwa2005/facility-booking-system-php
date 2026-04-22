@@ -223,6 +223,28 @@ th { background: #f9fafb; color: #334155; }
 .status-pending { background: #f59e0b; }
 .status-approved { background: #10b981; }
 .status-rejected, .status-cancelled { background: #ef4444; }
+.two-column-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 0.9rem;
+}
+.dash-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.65rem;
+}
+.dash-list li {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 0.6rem 0.7rem;
+}
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.7rem;
+}
 
 .slot-list { margin: 0.35rem 0 0; padding-left: 1.1rem; color: #4b5563; font-size: 0.9rem; }
 .availability-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.8rem; }

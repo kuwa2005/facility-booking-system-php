@@ -55,6 +55,75 @@ foreach ($reservations as $row) {
         $unpaidCount++;
     }
 }
+
+$today = date('Y-m-d');
+$monthStart = date('Y-m-01');
+$monthEnd = date('Y-m-t');
+
+$todayReservationsStmt = $pdo->prepare(
+    "SELECT COUNT(*) AS cnt
+     FROM usages u
+     INNER JOIN applications a ON a.id = u.application_id
+     WHERE u.use_date = ?
+       AND a.status IN ('pending', 'approved')"
+);
+$todayReservationsStmt->execute([$today]);
+$todayReservations = (int)($todayReservationsStmt->fetch()['cnt'] ?? 0);
+
+$upcomingReservationsStmt = $pdo->prepare(
+    "SELECT COUNT(*) AS cnt
+     FROM usages u
+     INNER JOIN applications a ON a.id = u.application_id
+     WHERE u.use_date > ?
+       AND a.status IN ('pending', 'approved')"
+);
+$upcomingReservationsStmt->execute([$today]);
+$upcomingReservations = (int)($upcomingReservationsStmt->fetch()['cnt'] ?? 0);
+
+$monthlyRevenueStmt = $pdo->prepare(
+    "SELECT COALESCE(SUM(a.total_amount), 0) AS total
+     FROM applications a
+     INNER JOIN usages u ON u.application_id = a.id
+     WHERE u.use_date BETWEEN ? AND ?
+       AND a.status IN ('approved')
+       AND a.payment_status = 'paid'"
+);
+$monthlyRevenueStmt->execute([$monthStart, $monthEnd]);
+$monthlyRevenue = (int)($monthlyRevenueStmt->fetch()['total'] ?? 0);
+
+$recentApplicationsStmt = $pdo->query(
+    "SELECT
+        a.id,
+        a.event_name,
+        a.applicant_representative,
+        a.total_amount,
+        a.payment_status,
+        a.created_at
+     FROM applications a
+     ORDER BY a.created_at DESC
+     LIMIT 5"
+);
+$recentApplications = $recentApplicationsStmt->fetchAll();
+
+$todayUsageStmt = $pdo->prepare(
+    "SELECT
+        u.id,
+        r.name AS room_name,
+        a.event_name,
+        u.use_morning,
+        u.use_afternoon,
+        u.use_evening,
+        u.ac_requested
+     FROM usages u
+     INNER JOIN rooms r ON r.id = u.room_id
+     INNER JOIN applications a ON a.id = u.application_id
+     WHERE u.use_date = ?
+       AND a.status IN ('pending', 'approved')
+     ORDER BY u.id DESC
+     LIMIT 8"
+);
+$todayUsageStmt->execute([$today]);
+$todayUsages = $todayUsageStmt->fetchAll();
 ?>
 <!doctype html>
 <html lang="ja">
@@ -94,10 +163,58 @@ foreach ($reservations as $row) {
         </section>
 
         <section class="stats-grid">
-            <article class="stat-box bg1"><div>総申請数</div><div class="num"><?= $totalCount ?></div></article>
-            <article class="stat-box bg2"><div>承認待ち</div><div class="num"><?= $pendingCount ?></div></article>
-            <article class="stat-box bg3"><div>未決済</div><div class="num"><?= $unpaidCount ?></div></article>
-            <article class="stat-box bg4"><div>合計金額</div><div class="num">¥<?= number_format($totalAmount) ?></div></article>
+            <article class="stat-box bg1"><div>本日の予約</div><div class="num"><?= $todayReservations ?></div><small>date: <?= h($today) ?></small></article>
+            <article class="stat-box bg2"><div>今後の予約</div><div class="num"><?= $upcomingReservations ?></div><small>明日以降</small></article>
+            <article class="stat-box bg3"><div>未決済</div><div class="num"><?= $unpaidCount ?></div><small>全期間</small></article>
+            <article class="stat-box bg4"><div>今月売上（入金済）</div><div class="num">¥<?= number_format($monthlyRevenue) ?></div><small><?= h($monthStart) ?> - <?= h($monthEnd) ?></small></article>
+        </section>
+
+        <section class="two-column-cards">
+            <article class="card">
+                <h3 class="card-title">最近の申請</h3>
+                <?php if (count($recentApplications) === 0): ?>
+                    <p class="room-meta">申請データがありません。</p>
+                <?php else: ?>
+                    <ul class="dash-list">
+                        <?php foreach ($recentApplications as $app): ?>
+                            <li>
+                                <strong>#<?= (int)$app['id'] ?> <?= h($app['event_name']) ?></strong><br>
+                                <small><?= h($app['applicant_representative']) ?> / <?= number_format((int)$app['total_amount']) ?>円 / <?= h($app['payment_status']) ?></small>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </article>
+
+            <article class="card">
+                <h3 class="card-title">本日の利用</h3>
+                <?php if (count($todayUsages) === 0): ?>
+                    <p class="room-meta">本日の利用予定はありません。</p>
+                <?php else: ?>
+                    <ul class="dash-list">
+                        <?php foreach ($todayUsages as $u): ?>
+                            <li>
+                                <strong><?= h($u['room_name']) ?> / <?= h($u['event_name']) ?></strong><br>
+                                <small>
+                                    <?= (int)$u['use_morning'] === 1 ? '午前 ' : '' ?>
+                                    <?= (int)$u['use_afternoon'] === 1 ? '午後 ' : '' ?>
+                                    <?= (int)$u['use_evening'] === 1 ? '夜間 ' : '' ?>
+                                    <?= (int)$u['ac_requested'] === 1 ? '/ 空調あり' : '' ?>
+                                </small>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </article>
+        </section>
+
+        <section class="card">
+            <h3 class="card-title">クイックアクション</h3>
+            <div class="quick-actions">
+                <a href="/admin.php" class="btn btn-primary">予約管理</a>
+                <a href="/equipment_admin.php" class="btn btn-outline">設備管理</a>
+                <a href="/closed_dates_admin.php" class="btn btn-outline">休館日管理</a>
+            </div>
         </section>
 
         <section class="card">
