@@ -55,6 +55,7 @@ a { color: inherit; }
 .room-card h3 { margin: 0 0 0.35rem; }
 .room-meta { color: #6b7280; font-size: 0.92rem; }
 .room-price { margin-top: 0.55rem; color: #2563eb; font-weight: 700; }
+.room-desc { color: #4b5563; font-size: 0.9rem; margin-top: 0.4rem; }
 
 .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
 .feature-card { text-align: center; padding: 1.1rem; border-radius: 8px; background: #fff; border: 1px solid #e5e7eb; }
@@ -222,6 +223,12 @@ th { background: #f9fafb; color: #334155; }
 .status-pending { background: #f59e0b; }
 .status-approved { background: #10b981; }
 .status-rejected, .status-cancelled { background: #ef4444; }
+
+.slot-list { margin: 0.35rem 0 0; padding-left: 1.1rem; color: #4b5563; font-size: 0.9rem; }
+.availability-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 0.8rem; }
+.availability-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 0.9rem; background: #fff; }
+.badge-ok { display: inline-block; background: #dcfce7; color: #166534; border-radius: 999px; padding: 0.2rem 0.55rem; font-size: 0.75rem; font-weight: 600; }
+.badge-ng { display: inline-block; background: #fee2e2; color: #991b1b; border-radius: 999px; padding: 0.2rem 0.55rem; font-size: 0.75rem; font-weight: 600; }
 
 @media (max-width: 900px) {
     .form-grid.two-col { grid-template-columns: 1fr; }

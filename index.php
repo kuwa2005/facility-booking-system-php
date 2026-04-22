@@ -30,7 +30,8 @@ $user = currentUser();
         <h1 class="brand"><a href="/index.php">施設予約システム（PHP DEMO）</a></h1>
         <nav class="public-nav">
             <a href="/index.php">ホーム</a>
-            <a href="/index.php#rooms">施設一覧</a>
+            <a href="/rooms.php">施設一覧</a>
+            <a href="/availability.php">空き状況</a>
             <a href="/index.php#booking-form">予約申請</a>
             <?php if ($user): ?>
                 <a href="/my_page.php">マイページ</a>
@@ -68,9 +69,13 @@ $user = currentUser();
                         <div class="room-price">
                             ¥<?= number_format((int)$room['base_price_morning']) ?>〜
                         </div>
+                        <p style="margin-top:0.8rem;">
+                            <a class="btn btn-outline" href="/room_detail.php?id=<?= (int)$room['id'] ?>">詳細を見る</a>
+                        </p>
                     </article>
                 <?php endforeach; ?>
             </div>
+            <p><a class="btn btn-primary" href="/rooms.php">すべての施設を見る</a></p>
         </section>
 
         <section id="booking-form" class="card">
